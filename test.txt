@@ -1,0 +1,160 @@
+Sub DrawBarGraph()
+
+  Dim ShapeTop
+  Dim ShapeLeft
+  Dim ShapeHegiht
+  Dim ShapeWidth
+  
+  Dim UL
+  Dim LL
+  
+  Dim DataMax
+  Dim DataMin
+  Dim DataAve
+  
+  Dim shp As Shape
+  
+  '--------------
+  'Data Input
+  '--------------
+  UL = InputBox("Input UL")
+  LL = InputBox("Input LL")
+  
+  DataMax = InputBox("Input DataMax")
+  DataMin = InputBox("Input DataMin")
+  DataAve = InputBox("Input DataAve")
+  
+  '--------------
+  'Data String -> Single
+  '--------------
+  UL = CSng(UL)
+  LL = CSng(LL)
+  
+  DataMax = CSng(DataMax)
+  DataMin = CSng(DataMin)
+  DataAve = CSng(DataAve)
+  
+    
+  '--------------
+  'Get Select Shape infotmation
+  '--------------
+  With ActiveWindow.Selection
+    If .Type <> ppSelectionShapes Then Exit Sub
+
+    With .ShapeRange
+      ShapeTop = .Item(1).Top
+      ShapeLeft = .Item(1).Left
+      ShapeHegiht = .Item(1).Height
+      ShapeWidth = .Item(1).Width
+      
+    End With ' .ShapeRange
+  End With ' ActiveWindow.Selection
+  
+  ShapeTop = ShapeTop - ShapeHegiht * 1.5
+  
+  '--------------
+  'Draw Background line
+  '--------------
+  For i = 0 To 10
+  
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddLine( _
+        BeginX:=ShapeLeft + i * ShapeWidth / 10, BeginY:=ShapeTop, EndX:=ShapeLeft + i * ShapeWidth / 10, EndY:=ShapeTop + ShapeHegiht)
+    shp.Line.ForeColor.RGB = RGB(191, 191, 191)
+    shp.Line.Weight = 0.5
+    shp.Line.DashStyle = msoLineDash
+  
+  Next
+  
+  '--------------
+  'Draw Data
+  '--------------
+  'DataMax
+  If (DataMax > UL) Or (DataMax < LL) Then
+    
+  Else
+  
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddLine( _
+      BeginX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMax), _
+      BeginY:=ShapeTop + (ShapeHegiht / 4), _
+      EndX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMax), _
+      EndY:=ShapeTop + ShapeHegiht - (ShapeHegiht / 4))
+    shp.Line.ForeColor.RGB = RGB(0, 0, 0)
+    shp.Line.Weight = 1.5
+    
+  
+  End If
+  
+  'DataMin
+  If (DataMin > UL) Or (DataMin < LL) Then
+
+  Else
+  
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddLine( _
+      BeginX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMin), _
+      BeginY:=ShapeTop + (ShapeHegiht / 4), _
+      EndX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMin), _
+      EndY:=ShapeTop + ShapeHegiht - (ShapeHegiht / 4))
+    shp.Line.ForeColor.RGB = RGB(0, 0, 0)
+    shp.Line.Weight = 1.5
+
+  
+  End If
+  
+  'Bar
+  If (DataMax > UL) And (DataMin < LL) Then
+  
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddLine( _
+      BeginX:=ShapeLeft, _
+      BeginY:=ShapeTop + (ShapeHegiht / 2), _
+      EndX:=ShapeLeft + ShapeWidth, _
+      EndY:=ShapeTop + (ShapeHegiht / 2))
+    shp.Line.ForeColor.RGB = RGB(0, 0, 0)
+    shp.Line.Weight = 1.5
+    
+  ElseIf (DataMax < UL) And (DataMin < LL) Then
+  
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddLine( _
+      BeginX:=ShapeLeft, _
+      BeginY:=ShapeTop + (ShapeHegiht / 2), _
+      EndX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMax), _
+      EndY:=ShapeTop + (ShapeHegiht / 2))
+    shp.Line.ForeColor.RGB = RGB(0, 0, 0)
+    shp.Line.Weight = 1.5
+  
+  ElseIf (DataMax > UL) And (DataMin > LL) Then
+  
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddLine( _
+      BeginX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMin), _
+      BeginY:=ShapeTop + (ShapeHegiht / 2), _
+      EndX:=ShapeLeft + ShapeWidth, _
+      EndY:=ShapeTop + (ShapeHegiht / 2))
+    shp.Line.ForeColor.RGB = RGB(0, 0, 0)
+    shp.Line.Weight = 1.5
+  
+  Else
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddLine( _
+      BeginX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMin), _
+      BeginY:=ShapeTop + (ShapeHegiht / 2), _
+      EndX:=ShapeLeft + (ShapeWidth / (UL - LL) * DataMax), _
+      EndY:=ShapeTop + (ShapeHegiht / 2))
+    shp.Line.ForeColor.RGB = RGB(0, 0, 0)
+    shp.Line.Weight = 1.5
+
+  
+  End If
+  
+  'DataAve
+  If (DataAve > UL) Or (DataAve < LL) Then
+    
+  Else
+  
+    Set shp = ActivePresentation.Slides(ActiveWindow.Selection.SlideRange.SlideIndex).Shapes.AddShape( _
+    msoShapeOval, _
+    Left:=ShapeLeft + (ShapeWidth / (UL - LL) * DataAve) - ShapeHegiht / 4, _
+    Top:=ShapeTop + (ShapeHegiht / 4), _
+    Width:=ShapeHegiht / 2, _
+    Height:=ShapeHegiht / 2)
+
+  End If
+    
+End Sub
